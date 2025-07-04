@@ -1,0 +1,60 @@
+/* rounded card corners */
+.card-round {
+  border-radius: 15px;
+}
+
+/* header gradient */
+.header-gradient {
+  background: linear-gradient(135deg,
+    #304757 0%,
+    #466073 50%,
+    #16697A 100%);
+}
+
+/* green accent text */
+.text-accent {
+  color: #56d35a !important;
+}
+
+/* section headings */
+.section-title {
+  color: #304757;
+}
+.section-subtitle {
+  color: #304757;
+}
+
+/* drop-zone styling */
+.drop-zone {
+  cursor: pointer;
+  min-height: 200px;
+  border: 3px dashed #56d35a;
+  border-radius: 15px;
+  background: linear-gradient(135deg,
+    rgba(86, 211, 90, 0.1) 0%,
+    rgba(48, 71, 87, 0.1) 100%);
+  transition: all 0.3s ease;
+}
+
+/* icon colors */
+.icon-accent {
+  color: #2d6d2a;
+}
+.icon-secondary {
+  color: #466073;
+}
+.icon-alt {
+  color: #16697A;
+}
+
+/* submit button override */
+#submit-btn {
+  background: linear-gradient(135deg,
+    #2d6d2a 0%,
+    #56d35a 100%);
+  border: none;
+  color: white;
+  font-weight: 600;
+  border-radius: 10px;
+  box-shadow: 0 4px 15px rgba(45, 109, 42, 0.3);
+}

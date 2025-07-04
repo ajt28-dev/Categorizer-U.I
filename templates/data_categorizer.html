@@ -3,23 +3,42 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Data Categorizer - PASIA</title>
+  <title>Data Categorizer – PASIA</title>
+
+  <!-- Bootstrap CSS -->
   <link
     href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css"
     rel="stylesheet">
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css" rel="stylesheet">
+
+  <!-- Bootstrap Icons -->
+  <link
+    href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css"
+    rel="stylesheet">
+
+  <!-- Your custom stylesheet -->
+  <link
+    href="{{ url_for('static', filename='static/css/data_categorizer.css') }}"
+    rel="stylesheet">
+
+  <link
+  href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css"
+  rel="stylesheet">
+  <link href="{{ url_for('static', filename='css/data_categorizer.css') }}" 
+  rel="stylesheet">
+
+    
 </head>
 <body class="bg-light">
   <div class="container py-5">
     <div class="row justify-content-center">
       <div class="col-lg-8">
-        <div class="card shadow-lg border-0" style="border-radius: 15px; overflow: hidden;">
-          <div class="card-header py-4 text-center" style="background: linear-gradient(135deg, #304757 0%, #466073 50%, #16697A 100%); color: white;">
+        <div class="card shadow-lg border-0 card‐round overflow-hidden">
+          <div class="card-header py-4 text-center header‐gradient text-white">
             <h2 class="mb-0 display-6">
               <i class="bi bi-files me-2"></i>
               Data Categorizer
             </h2>
-            <p class="mb-0" style="color: #56d35a;">Upload file and configure parameters</p>
+            <p class="mb-0 text-accent">Upload file and configure parameters</p>
           </div>
           <div class="card-body p-5">
 
@@ -40,16 +59,14 @@
 
               <!-- File Upload Section -->
               <div class="mb-5">
-                <h5 class="mb-3" style="color: #304757;">
+                <h5 class="mb-3 section‐title text-primary-dark">
                   <i class="bi bi-cloud-upload me-2"></i>
                   File Upload
                 </h5>
-                <div id="drop-zone"
-                     class="drop-zone mb-3 p-5 text-center position-relative"
-                     style="cursor: pointer; min-height: 200px; border: 3px dashed #56d35a; border-radius: 15px; background: linear-gradient(135deg, rgba(86, 211, 90, 0.1) 0%, rgba(48, 71, 87, 0.1) 100%); transition: all 0.3s ease;">
+                <div id="drop-zone" class="drop-zone mb-3 p-5 text-center position-relative">
                   <div class="upload-content">
-                    <i class="bi bi-file-earmark-arrow-up display-1 mb-3" style="color: #2d6d2a;"></i>
-                    <h6 class="mb-2" style="color: #304757;">Drag & drop your file here</h6>
+                    <i class="bi bi-file-earmark-arrow-up display-1 mb-3 icon‐accent"></i>
+                    <h6 class="mb-2 section‐subtitle">Drag &amp; drop your file here</h6>
                     <p class="text-muted small mb-3">or click to select file</p>
                     <span class="btn btn-outline-success">
                       <i class="bi bi-folder2-open me-2"></i>
@@ -63,11 +80,10 @@
                          required
                          accept=".csv,.xlsx,.json,.txt">
                 </div>
-                <div id="file-info" class="file-info" style="display: none;">
+                <div id="file-info" class="file-info d-none">
                   <div class="alert alert-success">
                     <i class="bi bi-check-circle me-2"></i>
-                    <strong id="file-name"></strong>
-                    <br>
+                    <strong id="file-name"></strong><br>
                     <small id="file-size" class="text-muted"></small>
                   </div>
                 </div>
@@ -75,81 +91,94 @@
 
               <!-- Configuration Variables Section -->
               <div class="mb-5">
-                <h5 class="mb-4" style="color: #304757;">
+                <h5 class="mb-4 section‐title text-primary-dark">
                   <i class="bi bi-gear me-2"></i>
                   Column Configuration
                 </h5>
                 
                 <div class="row">
-                  <!-- Variable 1 - Supplier Column Name -->
+                  <!-- Supplier Column -->
                   <div class="col-md-4 mb-4">
-                    <div class="form-group">
-                      <label for="variable1" class="form-label fw-bold" style="color: #304757;">
-                        <i class="bi bi-1-circle me-2" style="color: #2d6d2a;"></i>
-                        Supplier Column Name
-                      </label>
-                      <input type="text" 
-                             class="form-control form-control-lg" 
-                             id="variable1" 
-                             name="variable1" 
-                             placeholder="Enter supplier column name..."
-                             required
-                             style="border: 2px solid #56d35a; border-radius: 10px;">
-                      <div class="form-text">
-                        <i class="bi bi-info-circle me-1"></i>
-                        Name of the column containing supplier information
-                      </div>
+                    <label for="variable1" class="form-label fw-bold label‐accent">
+                      <i class="bi bi-1-circle me-2 icon‐accent"></i>
+                      Supplier Column Name
+                    </label>
+                    <input type="text"
+                           class="form-control form-control-lg"
+                           id="variable1"
+                           name="variable1"
+                           placeholder="Enter supplier column name...">
+                    <div class="form-text">
+                      <i class="bi bi-info-circle me-1"></i>
+                      Name of the column containing supplier information
                     </div>
                   </div>
 
-                  <!-- Variable 2 - Description Column Name -->
+                  <!-- Description Column -->
                   <div class="col-md-4 mb-4">
-                    <div class="form-group">
-                      <label for="variable2" class="form-label fw-bold" style="color: #304757;">
-                        <i class="bi bi-2-circle me-2" style="color: #466073;"></i>
-                        Description Column Name
-                      </label>
-                      <input type="text" 
-                             class="form-control form-control-lg" 
-                             id="variable2" 
-                             name="variable2" 
-                             placeholder="Enter description column name..."
-                             required
-                             style="border: 2px solid #466073; border-radius: 10px;">
-                      <div class="form-text">
-                        <i class="bi bi-info-circle me-1"></i>
-                        Name of the column containing item descriptions
-                      </div>
+                    <label for="variable2" class="form-label fw-bold label‐accent">
+                      <i class="bi bi-2-circle me-2 icon‐secondary"></i>
+                      Description Column Name
+                    </label>
+                    <input type="text"
+                           class="form-control form-control-lg"
+                           id="variable2"
+                           name="variable2"
+                           placeholder="Enter description column name..."
+                           required>
+                    <div class="form-text">
+                      <i class="bi bi-info-circle me-1"></i>
+                      Name of the column containing item descriptions
                     </div>
                   </div>
 
-                  <!-- Variable 3 - Output Format -->
+                  <!-- Categorization Column -->
                   <div class="col-md-4 mb-4">
-                    <div class="form-group">
-                      <label for="variable3" class="form-label fw-bold" style="color: #304757;">
-                        <i class="bi bi-3-circle me-2" style="color: #16697A;"></i>
-                        Output Format
+                    <label for="variable3" class="form-label fw-bold label‐accent">
+                      <i class="bi bi-3-circle me-2 icon‐alt"></i>
+                      Categorization/Classification
+                    </label>
+                    <input type="text"
+                           class="form-control form-control-lg"
+                           id="variable3"
+                           name="variable3"
+                           placeholder="Enter categorization column name...">
+                    <div class="form-text">
+                      <i class="bi bi-info-circle me-1"></i>
+                      Name of the column for categorization/classification
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Output Format Section -->
+              <div class="mb-5">
+                <h5 class="mb-4 section‐title text-primary-dark">
+                  <i class="bi bi-file-earmark-text me-2"></i>
+                  Output Format
+                </h5>
+                
+                <div class="row justify-content-center">
+                  <div class="col-md-8">
+                    <div class="btn-group-vertical d-grid gap-2" role="group">
+                      <input type="radio" class="btn-check" name="output_format" id="excel-format" value="excel" checked>
+                      <label class="btn btn-outline-primary btn-lg" for="excel-format">
+                        <i class="bi bi-filetype-xlsx me-2"></i>Excel (.xlsx)
                       </label>
-                      <div class="btn-group-vertical d-grid" role="group">
-                        <input type="radio" class="btn-check" name="variable3" id="json-format" value="json" checked>
-                        <label class="btn btn-outline-primary" for="json-format">
-                          <i class="bi bi-filetype-json me-2"></i>JSON
-                        </label>
-                        
-                        <input type="radio" class="btn-check" name="variable3" id="csv-format" value="csv">
-                        <label class="btn btn-outline-primary" for="csv-format">
-                          <i class="bi bi-filetype-csv me-2"></i>CSV
-                        </label>
-                        
-                        <input type="radio" class="btn-check" name="variable3" id="excel-format" value="excel">
-                        <label class="btn btn-outline-primary" for="excel-format">
-                          <i class="bi bi-filetype-xlsx me-2"></i>Excel
-                        </label>
-                      </div>
-                      <div class="form-text">
-                        <i class="bi bi-info-circle me-1"></i>
-                        Choose the output file format
-                      </div>
+                      
+                      <input type="radio" class="btn-check" name="output_format" id="csv-format" value="csv">
+                      <label class="btn btn-outline-primary btn-lg" for="csv-format">
+                        <i class="bi bi-filetype-csv me-2"></i>CSV (.csv)
+                      </label>
+                      
+                      <input type="radio" class="btn-check" name="output_format" id="json-format" value="json">
+                      <label class="btn btn-outline-primary btn-lg" for="json-format">
+                        <i class="bi bi-filetype-json me-2"></i>JSON (.json)
+                      </label>
+                    </div>
+                    <div class="form-text text-center mt-2">
+                      <i class="bi bi-info-circle me-1"></i>
+                      Choose the output file format for your categorized data
                     </div>
                   </div>
                 </div>
@@ -157,8 +186,7 @@
 
               <!-- Submit Section -->
               <div class="text-center">
-                <button type="submit" class="btn btn-lg px-5 py-3" id="submit-btn" disabled
-                        style="background: linear-gradient(135deg, #2d6d2a 0%, #56d35a 100%); border: none; color: white; font-weight: 600; border-radius: 10px; box-shadow: 0 4px 15px rgba(45, 109, 42, 0.3);">
+                <button type="submit" class="btn btn-lg px-5 py-3" id="submit-btn" disabled>
                   <i class="bi bi-play-circle me-2"></i>
                   Process Data
                 </button>
@@ -170,15 +198,19 @@
                 </div>
               </div>
             </form>
+
           </div>
         </div>
       </div>
     </div>
   </div>
 
+  <!-- Bootstrap JS Bundle -->
   <script
     src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js">
   </script>
+
+  <!-- Your drag‐and‐drop logic -->
   <script src="{{ url_for('static', filename='js/dragdrop.js') }}"></script>
 </body>
 </html>
