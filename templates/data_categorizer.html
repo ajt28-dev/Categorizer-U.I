@@ -66,11 +66,22 @@
                          required
                          accept=".csv,.xlsx,.json,.txt">
                 </div>
+                
+                <!-- Enhanced File Info Display -->
                 <div id="file-info" class="file-info d-none">
-                  <div class="alert alert-success">
-                    <i class="bi bi-check-circle me-2"></i>
-                    <strong id="file-name"></strong><br>
-                    <small id="file-size" class="text-muted"></small>
+                  <div class="alert alert-success d-flex align-items-center border-0 shadow-sm">
+                    <i class="bi bi-check-circle-fill me-3 text-success" style="font-size: 1.5rem;"></i>
+                    <div class="flex-grow-1">
+                      <div class="d-flex justify-content-between align-items-center">
+                        <div>
+                          <strong id="file-name" class="d-block text-dark"></strong>
+                          <small id="file-size" class="text-muted"></small>
+                        </div>
+                        <button type="button" class="btn btn-sm btn-outline-danger rounded-circle" id="remove-file" title="Remove file">
+                          <i class="bi bi-x-lg"></i>
+                        </button>
+                      </div>
+                    </div>
                   </div>
                 </div>
               </div>
@@ -172,7 +183,7 @@
 
               <!-- Submit Section -->
               <div class="text-center">
-                <button type="submit" class="btn btn-lg px-5 py-3" id="submit-btn" disabled>
+                <button type="submit" class="btn btn-lg px-5 py-3 btn-secondary" id="submit-btn" disabled>
                   <i class="bi bi-play-circle me-2"></i>
                   Process Data
                 </button>

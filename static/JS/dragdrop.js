@@ -1,4 +1,3 @@
-// Data Categorizer - Single File Drag & Drop with PASIA Styling
 document.addEventListener('DOMContentLoaded', function() {
     const dropZone = document.getElementById('drop-zone');
     const fileInput = document.getElementById('file-input');
@@ -6,153 +5,169 @@ document.addEventListener('DOMContentLoaded', function() {
     const fileName = document.getElementById('file-name');
     const fileSize = document.getElementById('file-size');
     const submitBtn = document.getElementById('submit-btn');
-    const confidenceSlider = document.getElementById('variable2');
-    const confidenceValue = document.getElementById('confidence-value');
-    
-    // Update confidence value display
-    confidenceSlider.addEventListener('input', function() {
-        confidenceValue.textContent = this.value + '%';
+    const removeFileBtn = document.getElementById('remove-file');
+
+    // Supported file types
+    const supportedTypes = ['.csv', '.xlsx', '.json', '.txt'];
+    const maxFileSize = 16 * 1024 * 1024; // 16MB
+
+    // Prevent default drag behaviors
+    ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
+        dropZone.addEventListener(eventName, preventDefaults, false);
+        document.body.addEventListener(eventName, preventDefaults, false);
     });
-    
-    // PASIA color scheme
-    const pasiaColors = {
-        greenPrimary: '#2d6d2a',
-        greenLight: '#56d35a',
-        blueDark: '#304757',
-        blueMedium: '#466073',
-        blueLight: '#16697A'
-    };
-    
-    // File validation
-    function isValidFile(file) {
-        const validTypes = [
-            'text/csv',
-            'application/vnd.ms-excel',
-            'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
-            'application/json',
-            'text/plain'
-        ];
-        const maxSize = 50 * 1024 * 1024; // 50MB
-        
-        if (!validTypes.includes(file.type) && !file.name.match(/\.(csv|xlsx|json|txt)$/i)) {
-            alert('Please upload a valid file format (CSV, Excel, JSON, or TXT)');
+
+    // Highlight drop area when item is dragged over it
+    ['dragenter', 'dragover'].forEach(eventName => {
+        dropZone.addEventListener(eventName, highlight, false);
+    });
+
+    ['dragleave', 'drop'].forEach(eventName => {
+        dropZone.addEventListener(eventName, unhighlight, false);
+    });
+
+    // Handle dropped files
+    dropZone.addEventListener('drop', handleDrop, false);
+
+    // Handle click to select file
+    dropZone.addEventListener('click', () => fileInput.click());
+
+    // Handle file input change
+    fileInput.addEventListener('change', handleFileSelect);
+
+    // Handle remove file button
+    if (removeFileBtn) {
+        removeFileBtn.addEventListener('click', removeFile);
+    }
+
+    function preventDefaults(e) {
+        e.preventDefault();
+        e.stopPropagation();
+    }
+
+    function highlight(e) {
+        dropZone.classList.add('drag-over');
+    }
+
+    function unhighlight(e) {
+        dropZone.classList.remove('drag-over');
+    }
+
+    function handleDrop(e) {
+        const dt = e.dataTransfer;
+        const files = dt.files;
+        handleFiles(files);
+    }
+
+    function handleFileSelect(e) {
+        const files = e.target.files;
+        handleFiles(files);
+    }
+
+    function handleFiles(files) {
+        if (files.length > 0) {
+            const file = files[0];
+            
+            // Validate file
+            if (validateFile(file)) {
+                displayFileInfo(file);
+            }
+        }
+    }
+
+    function validateFile(file) {
+        // Check file size
+        if (file.size > maxFileSize) {
+            showAlert('File too large. Maximum size is 16MB.', 'error');
             return false;
         }
-        
-        if (file.size > maxSize) {
-            alert('File size must be less than 50MB');
+
+        // Check file type
+        const fileExtension = '.' + file.name.split('.').pop().toLowerCase();
+        if (!supportedTypes.includes(fileExtension)) {
+            showAlert('Unsupported file type. Please upload CSV, Excel, JSON, or TXT files.', 'error');
             return false;
         }
-        
+
         return true;
     }
-    
-    // Format file size
+
+    function displayFileInfo(file) {
+        // Display filename
+        fileName.textContent = file.name;
+        
+        // Display file size
+        const size = formatFileSize(file.size);
+        fileSize.textContent = `Size: ${size}`;
+        
+        // Show file info with animation
+        fileInfo.classList.remove('d-none');
+        
+        // Hide drop zone
+        dropZone.style.display = 'none';
+        
+        // Enable submit button and change style
+        submitBtn.disabled = false;
+        submitBtn.classList.remove('btn-secondary');
+        submitBtn.classList.add('btn-success');
+        
+        console.log('File selected:', file.name, size);
+    }
+
     function formatFileSize(bytes) {
         if (bytes === 0) return '0 Bytes';
+        
         const k = 1024;
         const sizes = ['Bytes', 'KB', 'MB', 'GB'];
         const i = Math.floor(Math.log(bytes) / Math.log(k));
+        
         return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
     }
-    
-    // Handle file selection
-    function handleFile(file) {
-        if (isValidFile(file)) {
-            fileName.textContent = file.name;
-            fileSize.textContent = formatFileSize(file.size);
-            fileInfo.style.display = 'block';
-            
-            // Update drop zone appearance
-            dropZone.style.border = `3px solid ${pasiaColors.greenPrimary}`;
-            dropZone.style.background = `linear-gradient(135deg, rgba(45, 109, 42, 0.1) 0%, rgba(86, 211, 90, 0.2) 100%)`;
-            
-            // Enable submit button
-            checkFormValidity();
-        }
-    }
-    
-    // Check if form is valid
-    function checkFormValidity() {
-        const hasFile = fileInput.files.length > 0;
-        const hasVariable1 = document.getElementById('variable1').value !== '';
+
+    function removeFile() {
+        // Clear file input
+        fileInput.value = '';
         
-        if (hasFile && hasVariable1) {
-            submitBtn.disabled = false;
-            submitBtn.style.opacity = '1';
-            submitBtn.style.cursor = 'pointer';
-        } else {
-            submitBtn.disabled = true;
-            submitBtn.style.opacity = '0.6';
-            submitBtn.style.cursor = 'not-allowed';
-        }
-    }
-    
-    // Click to upload
-    dropZone.addEventListener('click', () => {
-        fileInput.click();
-    });
-    
-    // File input change
-    fileInput.addEventListener('change', (e) => {
-        if (e.target.files.length > 0) {
-            handleFile(e.target.files[0]);
-        }
-    });
-    
-    // Drag and drop events
-    dropZone.addEventListener('dragover', (e) => {
-        e.preventDefault();
-        dropZone.style.border = `3px dashed ${pasiaColors.blueLight}`;
-        dropZone.style.background = `linear-gradient(135deg, rgba(22, 105, 122, 0.1) 0%, rgba(86, 211, 90, 0.1) 100%)`;
-        dropZone.style.transform = 'scale(1.02)';
-    });
-    
-    dropZone.addEventListener('dragleave', (e) => {
-        e.preventDefault();
-        dropZone.style.border = `3px dashed ${pasiaColors.greenLight}`;
-        dropZone.style.background = `linear-gradient(135deg, rgba(86, 211, 90, 0.1) 0%, rgba(48, 71, 87, 0.1) 100%)`;
-        dropZone.style.transform = 'scale(1)';
-    });
-    
-    dropZone.addEventListener('drop', (e) => {
-        e.preventDefault();
-        dropZone.style.border = `3px dashed ${pasiaColors.greenLight}`;
-        dropZone.style.background = `linear-gradient(135deg, rgba(86, 211, 90, 0.1) 0%, rgba(48, 71, 87, 0.1) 100%)`;
-        dropZone.style.transform = 'scale(1)';
+        // Hide file info and show drop zone
+        fileInfo.classList.add('d-none');
+        dropZone.style.display = 'block';
         
-        const files = e.dataTransfer.files;
-        if (files.length > 0) {
-            fileInput.files = files;
-            handleFile(files[0]);
-        }
-    });
-    
-    // Monitor form changes
-    document.getElementById('variable1').addEventListener('change', checkFormValidity);
-    
-    // Form submission with loading state
-    document.getElementById('upload-form').addEventListener('submit', function(e) {
-        if (!submitBtn.disabled) {
-            submitBtn.innerHTML = '<span class="spinner-border spinner-border-sm me-2"></span>Processing...';
-            submitBtn.disabled = true;
-        }
-    });
-    
-    // Add hover effects to buttons
-    const buttons = document.querySelectorAll('.btn');
-    buttons.forEach(button => {
-        button.addEventListener('mouseenter', function() {
-            if (!this.disabled) {
-                this.style.transform = 'translateY(-2px)';
-                this.style.transition = 'all 0.3s ease';
+        // Disable submit button and reset style
+        submitBtn.disabled = true;
+        submitBtn.classList.remove('btn-success');
+        submitBtn.classList.add('btn-secondary');
+        
+        // Clear file info
+        fileName.textContent = '';
+        fileSize.textContent = '';
+        
+        console.log('File removed');
+    }
+
+    function showAlert(message, type = 'info') {
+        // Create alert element
+        const alertDiv = document.createElement('div');
+        alertDiv.className = `alert alert-${type === 'error' ? 'danger' : type} alert-dismissible fade show`;
+        alertDiv.innerHTML = `
+            <i class="bi bi-${type === 'error' ? 'exclamation-triangle' : 'info-circle'} me-2"></i>
+            ${message}
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        `;
+        
+        // Insert alert before the form
+        const form = document.getElementById('upload-form');
+        form.parentNode.insertBefore(alertDiv, form);
+        
+        // Auto-dismiss after 5 seconds
+        setTimeout(() => {
+            if (alertDiv.parentNode) {
+                alertDiv.remove();
             }
-        });
-        
-        button.addEventListener('mouseleave', function() {
-            this.style.transform = 'translateY(0)';
-        });
-    });
-    
-    console.log('Data Categorizer loaded successfully with PASIA styling');
+        }, 5000);
+    }
+
+    // Initialize: Check if file input already has a file (for page refresh)
+    if (fileInput.files && fileInput.files.length > 0) {
+        handleFiles(fileInput.files);
+    }
 });

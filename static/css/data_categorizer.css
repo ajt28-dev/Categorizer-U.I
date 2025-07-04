@@ -1,61 +1,152 @@
-/* rounded card corners */
+/* ========== CARD STYLES ========== */
 .card-round {
   border-radius: 15px;
+  overflow: hidden;
 }
 
-/* header gradient */
 .header-gradient {
-  background: linear-gradient(135deg,
-    #304757 0%,
-    #466073 50%,
-    #16697A 100%);
+  background: linear-gradient(135deg, #304757 0%, #466073 50%, #16697A 100%);
   color: white;
 }
 
-/* green accent text */
 .text-accent {
-  color: #56d35a !important;
+  color: #56d35a;
 }
 
-/* section headings */
+/* ========== SECTION TITLES ========== */
 .section-title {
   color: #304757;
 }
+
+.text-primary-dark {
+  color: #304757;
+}
+
 .section-subtitle {
   color: #304757;
 }
 
-/* drop-zone styling */
+.label-accent {
+  color: #304757;
+}
+
+/* ========== FILE UPLOAD SECTION ========== */
 .drop-zone {
   cursor: pointer;
   min-height: 200px;
   border: 3px dashed #56d35a;
   border-radius: 15px;
-  background: linear-gradient(135deg,
-    rgba(86, 211, 90, 0.1) 0%,
-    rgba(48, 71, 87, 0.1) 100%);
+  background: linear-gradient(135deg, rgba(86, 211, 90, 0.1) 0%, rgba(48, 71, 87, 0.1) 100%);
   transition: all 0.3s ease;
 }
 
-/* icon colors */
+.drop-zone.drag-over {
+  border-color: #28a745;
+  background: linear-gradient(135deg, rgba(40, 167, 69, 0.2) 0%, rgba(48, 71, 87, 0.1) 100%);
+  transform: scale(1.02);
+  box-shadow: 0 8px 25px rgba(40, 167, 69, 0.3);
+}
+
 .icon-accent {
   color: #2d6d2a;
 }
+
+/* ========== FILE INFO DISPLAY ========== */
+.file-info {
+  border-radius: 10px;
+  animation: fadeInUp 0.3s ease-out;
+}
+
+.file-info .alert {
+  border: 2px solid #28a745;
+  border-radius: 10px;
+  margin-bottom: 0;
+  background: linear-gradient(135deg, rgba(40, 167, 69, 0.1) 0%, rgba(255, 255, 255, 0.9) 100%);
+}
+
+#remove-file {
+  width: 30px;
+  height: 30px;
+  padding: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s ease;
+}
+
+#remove-file:hover {
+  background-color: #dc3545;
+  color: white;
+  transform: scale(1.1);
+}
+
+/* ========== FORM INPUTS ========== */
+.form-control-lg {
+  border-radius: 10px;
+  border: 2px solid #e9ecef;
+  transition: all 0.3s ease;
+}
+
+.form-control-lg:focus {
+  border-color: #56d35a;
+  box-shadow: 0 0 0 0.2rem rgba(86, 211, 90, 0.25);
+}
+
+/* ========== ICON COLORS ========== */
 .icon-secondary {
   color: #466073;
 }
+
 .icon-alt {
   color: #16697A;
 }
 
-/* submit button override */
+/* ========== SUBMIT BUTTON ========== */
 #submit-btn {
-  background: linear-gradient(135deg,
-    #2d6d2a 0%,
-    #56d35a 100%);
+  border-radius: 10px;
+  font-weight: 600;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+}
+
+#submit-btn:disabled {
+  background: #6c757d;
+  border-color: #6c757d;
+  cursor: not-allowed;
+  opacity: 0.6;
+}
+
+#submit-btn.btn-success {
+  background: linear-gradient(135deg, #2d6d2a 0%, #56d35a 100%);
   border: none;
   color: white;
-  font-weight: 600;
-  border-radius: 10px;
   box-shadow: 0 4px 15px rgba(45, 109, 42, 0.3);
+}
+
+#submit-btn.btn-success:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(45, 109, 42, 0.4);
+}
+
+/* ========== ANIMATIONS ========== */
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* ========== RADIO BUTTONS ========== */
+.btn-outline-primary {
+  border-radius: 10px;
+  transition: all 0.3s ease;
+}
+
+.btn-check:checked + .btn-outline-primary {
+  background: linear-gradient(135deg, #304757 0%, #466073 100%);
+  border-color: #304757;
 }

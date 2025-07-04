@@ -1,107 +1,157 @@
-from flask import render_template, request, flash, redirect, url_for, send_file
-from ml_utils import ml_manager
+# filepath: d:\Categorizer U.I\routes.py
+from flask import render_template, request, send_file, flash, redirect, url_for, jsonify
 import pandas as pd
-import io
-from datetime import date
+import os
+from datetime import datetime
+from werkzeug.utils import secure_filename
+import tempfile
 
 def register_routes(app):
     
+    # Define allowed extensions with fallback
+    ALLOWED_EXTENSIONS = getattr(app.config, 'ALLOWED_EXTENSIONS', {'csv', 'xlsx', 'json', 'txt'})
+    
+    def allowed_file(filename):
+        return '.' in filename and \
+               filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
+    
     @app.route('/')
-    def dashboard():
+    def index():
+        """Main menu page - Landing page"""
         return render_template('menu.html')
     
-    @app.route('/data_categorizer', methods=['GET', 'POST'])
+    @app.route('/data-categorizer')
     def data_categorizer():
-        if request.method == 'POST':
-            return upload()
+        """Data categorizer page"""
         return render_template('data_categorizer.html')
+    
+    @app.route('/name-assign')
+    def name_assign():
+        """Name assignment page (placeholder)"""
+        return "<h1>Name Assignment</h1><p>Coming soon!</p><a href='/'>Back to Menu</a>"
     
     @app.route('/upload', methods=['POST'])
     def upload():
         try:
-            # 1. Validate file upload
+            # Check if file was uploaded
             if 'datafile' not in request.files:
                 flash('No file selected', 'error')
-                return redirect(url_for('data_categorizer'))
+                return redirect('/data-categorizer')
             
             file = request.files['datafile']
             if file.filename == '':
                 flash('No file selected', 'error')
-                return redirect(url_for('data_categorizer'))
+                return redirect('/data-categorizer')
             
-            # 2. Get form data with NEW structure
-            form_data = {
-                'supplier_column': request.form.get('variable1', '').strip(),
-                'description_column': request.form.get('variable2', '').strip(),
-                'categorization_column': request.form.get('variable3', '').strip(),  # NEW!
-                'output_format': request.form.get('output_format', 'excel')          # RENAMED!
-            }
+            # Validate file type
+            if not allowed_file(file.filename):
+                flash('Invalid file type. Please upload CSV, Excel, JSON, or TXT files.', 'error')
+                return redirect('/data-categorizer')
             
-            # 3. Validate required fields
-            if not form_data['description_column']:
-                flash('Description column name is required!', 'error')
-                return redirect(url_for('data_categorizer'))
+            # Get form data
+            supplier_col = request.form.get('variable1', '').strip()
+            description_col = request.form.get('variable2', '').strip()
+            category_col = request.form.get('variable3', '').strip()
+            output_format = request.form.get('output_format', 'excel')
             
-            # 4. Read uploaded file
-            if file.filename.endswith('.csv'):
-                df = pd.read_csv(file)
-            elif file.filename.endswith(('.xlsx', '.xls')):
-                df = pd.read_excel(file)
+            # Validate required fields
+            if not description_col:
+                flash('Description column name is required', 'error')
+                return redirect('/data-categorizer')
+            
+            print(f"📊 Processing file: {file.filename}")
+            print(f"📋 Description column: {description_col}")
+            print(f"📤 Output format: {output_format}")
+            
+            # Read the uploaded file
+            df = read_uploaded_file(file)
+            print(f"📊 File loaded: {len(df)} rows, {len(df.columns)} columns")
+            print(f"📋 Available columns: {list(df.columns)}")
+            
+            # Validate that the description column exists
+            if description_col not in df.columns:
+                available_cols = ', '.join(df.columns)
+                flash(f'Column "{description_col}" not found. Available columns: {available_cols}', 'error')
+                return redirect('/data-categorizer')
+            
+            # Process with ML model if available
+            if hasattr(app, 'ml_manager') and app.ml_manager and app.ml_manager.is_loaded:
+                try:
+                    print("🤖 Running ML predictions...")
+                    df = app.ml_manager.predict_categories(df, description_col)
+                    flash('Data processed successfully with ML predictions!', 'success')
+                except Exception as e:
+                    print(f"❌ ML processing failed: {e}")
+                    flash(f'ML processing failed: {str(e)}', 'warning')
             else:
-                flash('Unsupported file format. Please upload CSV or Excel files.', 'error')
-                return redirect(url_for('data_categorizer'))
+                print("⚠️ ML models not available")
+                if hasattr(app, 'ml_manager'):
+                    print(f"ML Manager exists: {app.ml_manager is not None}")
+                    if app.ml_manager:
+                        print(f"ML Models loaded: {app.ml_manager.is_loaded}")
+                else:
+                    print("ML Manager not found in app")
+                flash('ML models not available - returning original data', 'warning')
             
-            # 5. Validate column names exist in the file
-            if form_data['description_column'] not in df.columns:
-                flash(f'Column "{form_data["description_column"]}" not found in file!', 'error')
-                return redirect(url_for('data_categorizer'))
+            # Generate output file
+            output_file = generate_output_file(df, output_format)
             
-            if form_data['supplier_column'] and form_data['supplier_column'] not in df.columns:
-                flash(f'Supplier column "{form_data["supplier_column"]}" not found in file!', 'warning')
-            
-            if form_data['categorization_column'] and form_data['categorization_column'] not in df.columns:
-                flash(f'Categorization column "{form_data["categorization_column"]}" not found in file!', 'warning')
-            
-            # 6. Apply ML predictions
-            df = ml_manager.predict_categories(df, form_data['description_column'])
-            
-            # 7. Generate output based on selected format
-            output_filename = f"categorized_data_{date.today().strftime('%d-%m-%Y')}"
-            
-            if form_data['output_format'] == 'excel':
-                output = io.BytesIO()
-                df.to_excel(output, index=False)
-                output.seek(0)
-                filename = f"{output_filename}.xlsx"
-                mimetype = 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
-                
-            elif form_data['output_format'] == 'csv':
-                output = io.StringIO()
-                df.to_csv(output, index=False)
-                output = io.BytesIO(output.getvalue().encode('utf-8'))
-                output.seek(0)
-                filename = f"{output_filename}.csv"
-                mimetype = 'text/csv'
-                
-            elif form_data['output_format'] == 'json':
-                output = io.BytesIO()
-                json_data = df.to_json(orient='records', indent=2)
-                output.write(json_data.encode('utf-8'))
-                output.seek(0)
-                filename = f"{output_filename}.json"
-                mimetype = 'application/json'
-            
-            else:
-                # Default to Excel
-                output = io.BytesIO()
-                df.to_excel(output, index=False)
-                output.seek(0)
-                filename = f"{output_filename}.xlsx"
-                mimetype = 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
-            
-            flash('✅ Data categorized successfully!', 'success')
-            return send_file(output, mimetype=mimetype, as_attachment=True, download_name=filename)
+            return send_file(
+                output_file,
+                as_attachment=True,
+                download_name=f'categorized_data_{datetime.now().strftime("%Y%m%d_%H%M%S")}.{get_file_extension(output_format)}'
+            )
             
         except Exception as e:
+            print(f"❌ Error processing data: {e}")
             flash(f'Error processing data: {str(e)}', 'error')
-            return redirect(url_for('data_categorizer'))
+            return redirect('/data-categorizer')
+
+def read_uploaded_file(file):
+    """Read uploaded file based on its extension"""
+    filename = file.filename.lower()
+    
+    try:
+        if filename.endswith('.csv'):
+            return pd.read_csv(file)
+        elif filename.endswith('.xlsx'):
+            try:
+                return pd.read_excel(file, engine='openpyxl')
+            except ImportError:
+                raise Exception("openpyxl is required for Excel files. Install with: pip install openpyxl")
+        elif filename.endswith('.json'):
+            return pd.read_json(file)
+        elif filename.endswith('.txt'):
+            return pd.read_csv(file, sep='\t')
+        else:
+            raise Exception(f"Unsupported file format: {filename}")
+    except Exception as e:
+        raise Exception(f"Failed to read file: {str(e)}")
+
+def generate_output_file(df, output_format):
+    """Generate output file in the requested format"""
+    timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+    
+    with tempfile.NamedTemporaryFile(delete=False, suffix=f'.{get_file_extension(output_format)}') as tmp:
+        try:
+            if output_format == 'excel':
+                df.to_excel(tmp.name, index=False, engine='openpyxl')
+            elif output_format == 'csv':
+                df.to_csv(tmp.name, index=False)
+            elif output_format == 'json':
+                df.to_json(tmp.name, orient='records', indent=2)
+            
+            return tmp.name
+        except Exception as e:
+            if output_format == 'excel':
+                raise Exception("Excel export failed. Install openpyxl: pip install openpyxl")
+            raise Exception(f"Failed to generate {output_format} file: {str(e)}")
+
+def get_file_extension(output_format):
+    """Get file extension for output format"""
+    extensions = {
+        'excel': 'xlsx',
+        'csv': 'csv',
+        'json': 'json'
+    }
+    return extensions.get(output_format, 'xlsx')
