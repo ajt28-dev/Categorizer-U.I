@@ -6,34 +6,20 @@
   <title>Data Categorizer – PASIA</title>
 
   <!-- Bootstrap CSS -->
-  <link
-    href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css"
-    rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
 
   <!-- Bootstrap Icons -->
-  <link
-    href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css"
-    rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css" rel="stylesheet">
 
   <!-- Your custom stylesheet -->
-  <link
-    href="{{ url_for('static', filename='static/css/data_categorizer.css') }}"
-    rel="stylesheet">
-
-  <link
-  href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css"
-  rel="stylesheet">
-  <link href="{{ url_for('static', filename='css/data_categorizer.css') }}" 
-  rel="stylesheet">
-
-    
+  <link href="{{ url_for('static', filename='css/data_categorizer.css') }}" rel="stylesheet">
 </head>
 <body class="bg-light">
   <div class="container py-5">
     <div class="row justify-content-center">
       <div class="col-lg-8">
-        <div class="card shadow-lg border-0 card‐round overflow-hidden">
-          <div class="card-header py-4 text-center header‐gradient text-white">
+        <div class="card shadow-lg border-0 card-round overflow-hidden">
+          <div class="card-header py-4 text-center header-gradient text-white">
             <h2 class="mb-0 display-6">
               <i class="bi bi-files me-2"></i>
               Data Categorizer
@@ -59,14 +45,14 @@
 
               <!-- File Upload Section -->
               <div class="mb-5">
-                <h5 class="mb-3 section‐title text-primary-dark">
+                <h5 class="mb-3 section-title text-primary-dark">
                   <i class="bi bi-cloud-upload me-2"></i>
                   File Upload
                 </h5>
                 <div id="drop-zone" class="drop-zone mb-3 p-5 text-center position-relative">
                   <div class="upload-content">
-                    <i class="bi bi-file-earmark-arrow-up display-1 mb-3 icon‐accent"></i>
-                    <h6 class="mb-2 section‐subtitle">Drag &amp; drop your file here</h6>
+                    <i class="bi bi-file-earmark-arrow-up display-1 mb-3 icon-accent"></i>
+                    <h6 class="mb-2 section-subtitle">Drag &amp; drop your file here</h6>
                     <p class="text-muted small mb-3">or click to select file</p>
                     <span class="btn btn-outline-success">
                       <i class="bi bi-folder2-open me-2"></i>
@@ -91,7 +77,7 @@
 
               <!-- Configuration Variables Section -->
               <div class="mb-5">
-                <h5 class="mb-4 section‐title text-primary-dark">
+                <h5 class="mb-4 section-title text-primary-dark">
                   <i class="bi bi-gear me-2"></i>
                   Column Configuration
                 </h5>
@@ -99,8 +85,8 @@
                 <div class="row">
                   <!-- Supplier Column -->
                   <div class="col-md-4 mb-4">
-                    <label for="variable1" class="form-label fw-bold label‐accent">
-                      <i class="bi bi-1-circle me-2 icon‐accent"></i>
+                    <label for="variable1" class="form-label fw-bold label-accent">
+                      <i class="bi bi-1-circle me-2 icon-accent"></i>
                       Supplier Column Name
                     </label>
                     <input type="text"
@@ -116,8 +102,8 @@
 
                   <!-- Description Column -->
                   <div class="col-md-4 mb-4">
-                    <label for="variable2" class="form-label fw-bold label‐accent">
-                      <i class="bi bi-2-circle me-2 icon‐secondary"></i>
+                    <label for="variable2" class="form-label fw-bold label-accent">
+                      <i class="bi bi-2-circle me-2 icon-secondary"></i>
                       Description Column Name
                     </label>
                     <input type="text"
@@ -134,8 +120,8 @@
 
                   <!-- Categorization Column -->
                   <div class="col-md-4 mb-4">
-                    <label for="variable3" class="form-label fw-bold label‐accent">
-                      <i class="bi bi-3-circle me-2 icon‐alt"></i>
+                    <label for="variable3" class="form-label fw-bold label-accent">
+                      <i class="bi bi-3-circle me-2 icon-alt"></i>
                       Categorization/Classification
                     </label>
                     <input type="text"
@@ -153,7 +139,7 @@
 
               <!-- Output Format Section -->
               <div class="mb-5">
-                <h5 class="mb-4 section‐title text-primary-dark">
+                <h5 class="mb-4 section-title text-primary-dark">
                   <i class="bi bi-file-earmark-text me-2"></i>
                   Output Format
                 </h5>
@@ -206,11 +192,9 @@
   </div>
 
   <!-- Bootstrap JS Bundle -->
-  <script
-    src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js">
-  </script>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 
-  <!-- Your drag‐and‐drop logic -->
+  <!-- Your drag-and-drop logic -->
   <script src="{{ url_for('static', filename='js/dragdrop.js') }}"></script>
 </body>
 </html>
