@@ -9,7 +9,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // Supported file types
     const supportedTypes = ['.csv', '.xlsx', '.json', '.txt'];
-    const maxFileSize = 16 * 1024 * 1024; // 16MB
+    // Remove maxFileSize variable completely
 
     // Prevent default drag behaviors
     ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
@@ -68,7 +68,7 @@ document.addEventListener('DOMContentLoaded', function() {
         if (files.length > 0) {
             const file = files[0];
             
-            // Validate file
+            // Validate file (only check file type, no size limit)
             if (validateFile(file)) {
                 displayFileInfo(file);
             }
@@ -76,13 +76,9 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     function validateFile(file) {
-        // Check file size
-        if (file.size > maxFileSize) {
-            showAlert('File too large. Maximum size is 16MB.', 'error');
-            return false;
-        }
-
-        // Check file type
+        // Remove file size check completely
+        
+        // Check file type only
         const fileExtension = '.' + file.name.split('.').pop().toLowerCase();
         if (!supportedTypes.includes(fileExtension)) {
             showAlert('Unsupported file type. Please upload CSV, Excel, JSON, or TXT files.', 'error');
@@ -96,7 +92,7 @@ document.addEventListener('DOMContentLoaded', function() {
         // Display filename
         fileName.textContent = file.name;
         
-        // Display file size
+        // Display file size (no limit warning)
         const size = formatFileSize(file.size);
         fileSize.textContent = `Size: ${size}`;
         
